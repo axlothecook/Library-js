@@ -1,17 +1,35 @@
 
 let mainContent = document.querySelector('.main-content');
 let addBtn = document.querySelector('.add-btn');
-// let btn = document.querySelector('.btn');
 const Library = [];
+
 
 function formValidation(author, title, pages){
     if((author === '') || (title === '') || (pages === '')){
         alert('Please fill out all fields.');
         return false;
     } else {
-        console.log('all good');
         return true;
     };
+}
+
+function checkFunction(toggleBtn, checkbox){
+    if(checkbox == true){
+        toggleBtn.setAttribute('class', 'positiveState');
+        toggleBtn.textContent = 'Read';
+    };
+    if(checkbox == false){
+        toggleBtn.setAttribute('class', 'negativeState');
+        toggleBtn.textContent = 'Not Read';
+    };
+    return toggleBtn;
+}
+
+function toggleFunction(toggleBtn){
+    const color = toggleBtn.classList;
+    const result = color.toggle('positiveState');
+    color.toggle('negativeState');
+    toggleBtn.textContent = `${result ? 'Read' : 'Not Read'}`;
 }
 
 function Book(authorInput, titleInput, pagesInput, checkbox){
@@ -47,58 +65,29 @@ function createBook(author, title, pages, checkbox){
     pagesOutput.classList.add('pagesOutput');
     book.appendChild(pagesOutput);
 
-    let toggleState = document.createElement('button');
-    toggleState.classList.add('toggleState');
-    if(checkbox.value == false){
-        console.log('Second checkbox: ');
-        console.log('Value: ' + checkbox.value);
-        console.log('Checked: ' + checkbox.checked);
-        toggleState.textContent = 'Read';
-        toggleState.classList.add('positiveState');
-    } else {
-        console.log('Third checkbox: ');
-        console.log('Value: ' + checkbox.value);
-        console.log('Checked: ' + checkbox.checked);
-        toggleState.textContent = 'Not Read';
-        toggleState.classList.add('negativeState');
-    };
-
-    // toggleState.addEventListener('click', () => {
-    //     if(toggleState.style.backgroundColor = 'red'){
-    //         toggleState.style.backgroundColor = 'green';
-    //     }
-    //     if(toggleState.style.backgroundColor = 'green'){
-    //         toggleState.style.backgroundColor = 'red';
-    //     }
-    // });
-
-    // toggleState.style.backgroundColor = (checkbox.checked == false) ? 'red' : 'green';
-
-    book.appendChild(toggleState);
+    let toggleBtn = document.createElement('button');
+    toggleBtn.classList.add('negativeState');
+    checkFunction(toggleBtn, checkbox.checked);
+    toggleBtn.addEventListener('click', function(){
+        toggleFunction(toggleBtn);
+    });
+    book.appendChild(toggleBtn);
 
     const dltBtn = document.createElement('button');
     dltBtn.textContent = 'Delete';
     dltBtn.classList.add('dltBtn');
+    dltBtn.addEventListener('click', function(){
+        bookDiv.remove();
+    });
     book.appendChild(dltBtn);
-    // dltBtn.addEventListener('clicked', () => {
-    //     bookDiv.style.display = 'none';
-    //     Library[bookDiv].style.display = 'none';
-    // });
 
     return bookDiv;
 }
 
 
-//one function has too many functionalities
 function createObject(title, author, pages, checkbox){
-    console.log('5th check: ');
-    console.log('Value: ' + checkbox.value);
-    console.log('Checked: ' + checkbox.checked);
     let newBook = new Book(title, author, pages, checkbox);
     Library.push(newBook);
-    console.log('4th check: ');
-    console.log('Value: ' + checkbox.value);
-    console.log('Checked: ' + checkbox.checked);
     let bookPopUp = createBook(newBook.title, newBook.author, newBook.pages, newBook.checkbox);
     mainContent.appendChild(bookPopUp);
     bookPopUp.style.display = 'block';
@@ -150,49 +139,46 @@ function createPopUp(){
     let checkbox = document.createElement('input');
     checkbox.classList.add('checkbox');
     checkbox.setAttribute('type', 'checkbox');
-    checkbox.checked = true;
-
-    // checkbox.addEventListener('click', () => {
-    //     console.log('checkbox was ticked off');
-    //     checkbox.checked = !checkbox.checked;
-    //     if(checkbox.checked = false){
-    //         toggleState.style.backgroundColor = 'green';
-    //     }
-    //     if(toggleState.style.backgroundColor = 'green'){
-    //         toggleState.style.backgroundColor = 'red';
-    //     }
-    // });
+    checkbox.checked = false;
     readDiv.appendChild(checkbox);
-
-    console.log('First checkbox: ');
-    console.log('Value: ' + checkbox.value);
-    console.log('Checked: ' + checkbox.checked);
 
     let submitBtn = document.createElement('button');
     submitBtn.classList.add('submitBtn');
     submitBtn.textContent = 'Create Book';
     childDiv.appendChild(submitBtn);
-    submitBtn.addEventListener('click', () => {
+    submitBtn.addEventListener('click', () => {  
         if(formValidation(authorInput.value, titleInput.value, pagesInput.value) === true){
             createObject(titleInput.value, authorInput.value, pagesInput.value, checkbox);
-            popupDiv.style.display = 'none';
-            popupDiv.close();
+            popupDiv.remove();
         };
     });
 
     return popupDiv;
 }
 
-
 function addBtnResponse(){
     let popUp = createPopUp();
     popUp.style.display = 'block';
     popUp.showModal();
-    //add the ability for the user to click off
+
+    popUp.addEventListener('click', (e) => {  
+        if(popUp === e.target){
+            function fadeOut(popUp){
+                let opacity = 1;
+                let interval = setInterval(function() {
+                    if (opacity > 0) {
+                       opacity -= 0.3;
+                       popUp.style.opacity = opacity;
+                    } else {
+                        clearInterval(interval);
+                        popUp.remove();
+                    }
+                }, 50);
+            }
+            fadeOut(popUp);
+        }
+    });
 }
 
 addBtn.addEventListener('click', addBtnResponse);
 
-// btn.addEventListener('click', () => {
-//     console.log('this one worked');
-// });
