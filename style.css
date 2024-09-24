@@ -47,13 +47,13 @@ p, h1, h2, h3, h4, h5, h6 {
     grid-column: 1 / 2;
 }
 
-.add-btn{
+.add-btn, .show-all-btn{
     font-size: 40px;
     border: none;
     background-color: transparent;
 }
 
-.add-btn:hover, .add-btn:active{
+.add-btn:hover, .add-btn:active, .show-all-btn:hover, .show-all-btn:active{
     cursor: pointer;
 }
 

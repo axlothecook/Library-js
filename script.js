@@ -1,7 +1,8 @@
 
 let mainContent = document.querySelector('.main-content');
 let addBtn = document.querySelector('.add-btn');
-const Library = [];
+let showAllBtn = document.querySelector('.show-all-btn');
+const Library = []; //Not really used
 
 
 function formValidation(author, title, pages){
@@ -11,7 +12,7 @@ function formValidation(author, title, pages){
     } else {
         return true;
     };
-}
+}//good function
 
 function checkFunction(toggleBtn, checkbox){
     if(checkbox == true){
@@ -23,24 +24,32 @@ function checkFunction(toggleBtn, checkbox){
         toggleBtn.textContent = 'Not Read';
     };
     return toggleBtn;
-}
+}                                                         
 
-function toggleFunction(toggleBtn){
-    const color = toggleBtn.classList;
-    const result = color.toggle('positiveState');
-    color.toggle('negativeState');
-    toggleBtn.textContent = `${result ? 'Read' : 'Not Read'}`;
-}
+// function toggleFunction(toggleBtn){
+//     const color = toggleBtn.classList;
+//     const result = color.toggle('positiveState');
+//     color.toggle('negativeState');
+//     toggleBtn.textContent = `${result ? 'Read' : 'Not Read'}`;
+// }
 
-function Book(authorInput, titleInput, pagesInput, checkbox){
+function Book(authorInput, titleInput, pagesInput, hasRead){
     this.author = authorInput;
     this.title = titleInput;
     this.pages = pagesInput;
-    this.checkbox = checkbox;
-}
+    this.read = hasRead;      //added true / false to book?
+};
+
+function removeFromLibrary(item){             //function that removes book from library
+    Library.forEach((element) => {
+        if(element === item){
+            Library.splice(element, 1);
+        };
+    });
+};
 
 //creates Book card with user entered data
-function createBook(author, title, pages, checkbox){
+function createBook(bookObj){
     const bookDiv = document.createElement('div');
     bookDiv.classList.add('bookDiv');
     mainContent.appendChild(bookDiv);
@@ -50,15 +59,16 @@ function createBook(author, title, pages, checkbox){
     bookDiv.appendChild(book);
 
     const titleOutput = document.createElement('h1');
-    titleOutput.textContent = title;
+    titleOutput.textContent = bookObj.title;
     titleOutput.classList.add('titleOutput');
     book.appendChild(titleOutput);
 
     const authorOutput = document.createElement('h1');
-    authorOutput.textContent = author;
+    authorOutput.textContent = bookObj.author;
     authorOutput.classList.add('authorOutput');
     book.appendChild(authorOutput);
 
+    let pages = bookObj.pages;
     let result = pages > 1 ? pages + ' pages' : pages + ' page';
     const pagesOutput = document.createElement('h1');
     pagesOutput.textContent = result;
@@ -67,9 +77,11 @@ function createBook(author, title, pages, checkbox){
 
     let toggleBtn = document.createElement('button');
     toggleBtn.classList.add('negativeState');
-    checkFunction(toggleBtn, checkbox.checked);
-    toggleBtn.addEventListener('click', function(){
-        toggleFunction(toggleBtn);
+    checkFunction(toggleBtn, bookObj.read);
+    // toggleBtn = bookObj.checkbox;
+    toggleBtn.addEventListener('click', function(){                           //clean, nice
+        bookObj.read = !bookObj.read;
+        checkFunction(toggleBtn, bookObj.read);
     });
     book.appendChild(toggleBtn);
 
@@ -77,7 +89,8 @@ function createBook(author, title, pages, checkbox){
     dltBtn.textContent = 'Delete';
     dltBtn.classList.add('dltBtn');
     dltBtn.addEventListener('click', function(){
-        bookDiv.remove();
+        bookDiv.remove();                                        
+        removeFromLibrary(bookObj);
     });
     book.appendChild(dltBtn);
 
@@ -86,10 +99,10 @@ function createBook(author, title, pages, checkbox){
 
 
 function createObject(title, author, pages, checkbox){
-    let newBook = new Book(title, author, pages, checkbox);
-    Library.push(newBook);
-    let bookPopUp = createBook(newBook.title, newBook.author, newBook.pages, newBook.checkbox);
-    mainContent.appendChild(bookPopUp);
+    let newBook = new Book(title, author, pages, checkbox); 
+    Library.push(newBook);                                                                           //ver nice but unused
+    let bookPopUp = createBook(newBook);     
+    mainContent.appendChild(bookPopUp);                                                               //correct usage
     bookPopUp.style.display = 'block';
 }
 
@@ -146,9 +159,9 @@ function createPopUp(){
     submitBtn.classList.add('submitBtn');
     submitBtn.textContent = 'Create Book';
     childDiv.appendChild(submitBtn);
-    submitBtn.addEventListener('click', () => {  
+    submitBtn.addEventListener('click', () => {  //clean inline function
         if(formValidation(authorInput.value, titleInput.value, pagesInput.value) === true){
-            createObject(titleInput.value, authorInput.value, pagesInput.value, checkbox);
+            createObject(titleInput.value, authorInput.value, pagesInput.value, checkbox.checked);
             popupDiv.remove();
         };
     });
@@ -181,4 +194,18 @@ function addBtnResponse(){
 }
 
 addBtn.addEventListener('click', addBtnResponse);
+showAllBtn.addEventListener('click', function(){   //function that displays all array elements
+    Library.forEach((element) => {
+            let bookPopUp = createBook(element);     
+            mainContent.appendChild(bookPopUp);                                                             
+            bookPopUp.style.display = 'block';
+    });
 
+    // for(let i = 0; i < 1; i++){
+    //     Library.forEach((element) => {
+    //         let bookPopUp = createBook(element);     
+    //         mainContent.appendChild(bookPopUp);                                                             
+    //         bookPopUp.style.display = 'block';
+    //     });
+    // };
+})
