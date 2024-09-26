@@ -1,9 +1,7 @@
-
 let mainContent = document.querySelector('.main-content');
 let addBtn = document.querySelector('.add-btn');
 let showAllBtn = document.querySelector('.show-all-btn');
-const Library = []; //Not really used
-
+const Library = [];
 
 function formValidation(author, title, pages){
     if((author === '') || (title === '') || (pages === '')){
@@ -12,7 +10,7 @@ function formValidation(author, title, pages){
     } else {
         return true;
     };
-}//good function
+};
 
 function checkFunction(toggleBtn, checkbox){
     if(checkbox == true){
@@ -24,23 +22,16 @@ function checkFunction(toggleBtn, checkbox){
         toggleBtn.textContent = 'Not Read';
     };
     return toggleBtn;
-}                                                         
-
-// function toggleFunction(toggleBtn){
-//     const color = toggleBtn.classList;
-//     const result = color.toggle('positiveState');
-//     color.toggle('negativeState');
-//     toggleBtn.textContent = `${result ? 'Read' : 'Not Read'}`;
-// }
+};                                                   
 
 function Book(authorInput, titleInput, pagesInput, hasRead){
     this.author = authorInput;
     this.title = titleInput;
     this.pages = pagesInput;
-    this.read = hasRead;      //added true / false to book?
+    this.read = hasRead;      
 };
 
-function removeFromLibrary(item){             //function that removes book from library
+function removeFromLibrary(item){             
     Library.forEach((element) => {
         if(element === item){
             Library.splice(element, 1);
@@ -48,7 +39,7 @@ function removeFromLibrary(item){             //function that removes book from 
     });
 };
 
-//creates Book card with user entered data
+//creates Book card with user data
 function createBook(bookObj){
     const bookDiv = document.createElement('div');
     bookDiv.classList.add('bookDiv');
@@ -78,8 +69,7 @@ function createBook(bookObj){
     let toggleBtn = document.createElement('button');
     toggleBtn.classList.add('negativeState');
     checkFunction(toggleBtn, bookObj.read);
-    // toggleBtn = bookObj.checkbox;
-    toggleBtn.addEventListener('click', function(){                           //clean, nice
+    toggleBtn.addEventListener('click', function(){                      
         bookObj.read = !bookObj.read;
         checkFunction(toggleBtn, bookObj.read);
     });
@@ -95,7 +85,7 @@ function createBook(bookObj){
     book.appendChild(dltBtn);
 
     return bookDiv;
-}
+};
 
 
 function createObject(title, author, pages, checkbox){
@@ -104,7 +94,7 @@ function createObject(title, author, pages, checkbox){
     let bookPopUp = createBook(newBook);     
     mainContent.appendChild(bookPopUp);                                                               //correct usage
     bookPopUp.style.display = 'block';
-}
+};
 
 
 //function for a popup
@@ -159,7 +149,7 @@ function createPopUp(){
     submitBtn.classList.add('submitBtn');
     submitBtn.textContent = 'Create Book';
     childDiv.appendChild(submitBtn);
-    submitBtn.addEventListener('click', () => {  //clean inline function
+    submitBtn.addEventListener('click', () => {  
         if(formValidation(authorInput.value, titleInput.value, pagesInput.value) === true){
             createObject(titleInput.value, authorInput.value, pagesInput.value, checkbox.checked);
             popupDiv.remove();
@@ -167,7 +157,7 @@ function createPopUp(){
     });
 
     return popupDiv;
-}
+};
 
 function addBtnResponse(){
     let popUp = createPopUp();
@@ -187,11 +177,11 @@ function addBtnResponse(){
                         popUp.remove();
                     }
                 }, 50);
-            }
+            };
             fadeOut(popUp);
-        }
+        };
     });
-}
+};
 
 addBtn.addEventListener('click', addBtnResponse);
 showAllBtn.addEventListener('click', function(){   //function that displays all array elements
@@ -200,12 +190,4 @@ showAllBtn.addEventListener('click', function(){   //function that displays all 
             mainContent.appendChild(bookPopUp);                                                             
             bookPopUp.style.display = 'block';
     });
-
-    // for(let i = 0; i < 1; i++){
-    //     Library.forEach((element) => {
-    //         let bookPopUp = createBook(element);     
-    //         mainContent.appendChild(bookPopUp);                                                             
-    //         bookPopUp.style.display = 'block';
-    //     });
-    // };
-})
+});
