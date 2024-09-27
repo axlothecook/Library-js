@@ -90,9 +90,9 @@ function createBook(bookObj){
 
 function createObject(title, author, pages, checkbox){
     let newBook = new Book(title, author, pages, checkbox); 
-    Library.push(newBook);                                                                           //ver nice but unused
+    Library.push(newBook);                                                                           
     let bookPopUp = createBook(newBook);     
-    mainContent.appendChild(bookPopUp);                                                               //correct usage
+    mainContent.appendChild(bookPopUp);                                                             
     bookPopUp.style.display = 'block';
 };
 
