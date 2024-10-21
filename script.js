@@ -74,7 +74,7 @@ const GUImanager = (function (){
 
     const createObject = (book) => {
         let bookPopUp = GUImanager.createBook(book);     
-        mainContent.appendChild(bookPopUp);  //createBook(newBook) instead myb                                                            
+        mainContent.appendChild(bookPopUp);                                                  
         bookPopUp.style.display = 'block';
     }
 
@@ -98,7 +98,6 @@ class Book{
         this.author = author;
         this.pages = pages;
         this.read = hasRead;
-
         library.push(this);                                                                       
     } 
 
@@ -200,6 +199,5 @@ function addBtnResponse(){
 
 addBtn.addEventListener('click', addBtnResponse);
 showAllBtn.addEventListener('click', function(){   
-    //new code
     GUImanager.displayAll();  
 });
