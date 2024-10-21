@@ -8,8 +8,10 @@
 }
 
 body{
-    --main-color: #ccc;
-    --bar-color: #fff;
+    /* --main-color: #ccc;
+    --bar-color: #fff; */
+    --main-color: #252432;   /* remove after testing*/
+    --bar-color: #2b3f99;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     text-align: center;
@@ -79,7 +81,8 @@ p, h1, h2, h3, h4, h5, h6 {
 .childDiv, .book{
     width: 300px;
     height: auto;
-    background-color: #fff;
+    /* background-color: #fff; */
+    background-color: var(--bar-color);    /*remove after testing*/
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -1,7 +1,8 @@
 let mainContent = document.querySelector('.main-content');
 let addBtn = document.querySelector('.add-btn');
 let showAllBtn = document.querySelector('.show-all-btn');
-const Library = [];
+let newBook;
+const library = [];
 
 function formValidation(author, title, pages){
     if((author === '') || (title === '') || (pages === '')){
@@ -12,92 +13,104 @@ function formValidation(author, title, pages){
     };
 };
 
-function checkFunction(toggleBtn, checkbox){
-    if(checkbox == true){
-        toggleBtn.setAttribute('class', 'positiveState');
-        toggleBtn.textContent = 'Read';
-    };
-    if(checkbox == false){
-        toggleBtn.setAttribute('class', 'negativeState');
-        toggleBtn.textContent = 'Not Read';
-    };
-    return toggleBtn;
-};                                                   
-
-function Book(authorInput, titleInput, pagesInput, hasRead){
-    this.author = authorInput;
-    this.title = titleInput;
-    this.pages = pagesInput;
-    this.read = hasRead;      
-};
-
-function removeFromLibrary(item){             
-    Library.forEach((element) => {
-        if(element === item){
-            Library.splice(element, 1);
+const GUImanager = (function (){
+    const checkFunction = (toggleBtn, hasRead) => {
+        if(hasRead == true){
+            toggleBtn.setAttribute('class', 'positiveState');
+            toggleBtn.textContent = 'Read';
         };
-    });
+        if(hasRead == false){
+            toggleBtn.setAttribute('class', 'negativeState');
+            toggleBtn.textContent = 'Not Read';
+        };
+    };
+
+     //creates html instance with book object info
+    const createBook = (bookObj) => {
+        const bookDiv = document.createElement('div');
+        bookDiv.classList.add('bookDiv');
+        mainContent.appendChild(bookDiv);
+
+        const book = document.createElement('div');
+        book.classList.add('book');
+        bookDiv.appendChild(book);
+
+        const titleOutput = document.createElement('h1');
+        titleOutput.textContent = bookObj.title;
+        titleOutput.classList.add('titleOutput');
+        book.appendChild(titleOutput);
+
+        const authorOutput = document.createElement('h1');
+        authorOutput.textContent = bookObj.author;
+        authorOutput.classList.add('authorOutput');
+        book.appendChild(authorOutput);
+
+        let pages = bookObj.pages;
+        let result = pages > 1 ? pages + ' pages' : pages + ' page';
+        const pagesOutput = document.createElement('h1');
+        pagesOutput.textContent = result;
+        pagesOutput.classList.add('pagesOutput');
+        book.appendChild(pagesOutput);
+
+        let toggleBtn = document.createElement('button');
+        toggleBtn.classList.add('negativeState');
+        GUImanager.checkFunction(toggleBtn, bookObj.read);
+        toggleBtn.addEventListener('click', function(){                      
+            bookObj.read = !bookObj.read;
+            GUImanager.checkFunction(toggleBtn, bookObj.read);
+        });
+        book.appendChild(toggleBtn);
+
+        const dltBtn = document.createElement('button');
+        dltBtn.textContent = 'Delete';
+        dltBtn.classList.add('dltBtn');
+        dltBtn.addEventListener('click', function(){
+            bookDiv.remove();                                   
+            bookObj.removeFromLibrary();   
+        });
+        book.appendChild(dltBtn);
+        return bookDiv;
+    }
+
+    const createObject = (book) => {
+        let bookPopUp = GUImanager.createBook(book);     
+        mainContent.appendChild(bookPopUp);  //createBook(newBook) instead myb                                                            
+        bookPopUp.style.display = 'block';
+    }
+
+    // function that displays all array elements
+    const displayAll = () => {
+        library.forEach((element) => {
+            let bookPopUp = GUImanager.createBook(element);     
+            mainContent.appendChild(bookPopUp);                                                             
+            bookPopUp.style.display = 'block';
+        });
+    }
+
+    return {checkFunction, createBook, createObject, displayAll};
+})();
+
+
+//book object constructor
+class Book{
+    constructor(title, author, pages, hasRead){
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+        this.read = hasRead;
+
+        library.push(this);                                                                       
+    } 
+
+    removeFromLibrary(){             
+        library.forEach((index) => {
+            if(index === this){
+                library.splice(index, 1);
+            };
+        });
+    };
 };
 
-//creates Book card with user data
-function createBook(bookObj){
-    const bookDiv = document.createElement('div');
-    bookDiv.classList.add('bookDiv');
-    mainContent.appendChild(bookDiv);
-
-    const book = document.createElement('div');
-    book.classList.add('book');
-    bookDiv.appendChild(book);
-
-    const titleOutput = document.createElement('h1');
-    titleOutput.textContent = bookObj.title;
-    titleOutput.classList.add('titleOutput');
-    book.appendChild(titleOutput);
-
-    const authorOutput = document.createElement('h1');
-    authorOutput.textContent = bookObj.author;
-    authorOutput.classList.add('authorOutput');
-    book.appendChild(authorOutput);
-
-    let pages = bookObj.pages;
-    let result = pages > 1 ? pages + ' pages' : pages + ' page';
-    const pagesOutput = document.createElement('h1');
-    pagesOutput.textContent = result;
-    pagesOutput.classList.add('pagesOutput');
-    book.appendChild(pagesOutput);
-
-    let toggleBtn = document.createElement('button');
-    toggleBtn.classList.add('negativeState');
-    checkFunction(toggleBtn, bookObj.read);
-    toggleBtn.addEventListener('click', function(){                      
-        bookObj.read = !bookObj.read;
-        checkFunction(toggleBtn, bookObj.read);
-    });
-    book.appendChild(toggleBtn);
-
-    const dltBtn = document.createElement('button');
-    dltBtn.textContent = 'Delete';
-    dltBtn.classList.add('dltBtn');
-    dltBtn.addEventListener('click', function(){
-        bookDiv.remove();                                        
-        removeFromLibrary(bookObj);
-    });
-    book.appendChild(dltBtn);
-
-    return bookDiv;
-};
-
-
-function createObject(title, author, pages, checkbox){
-    let newBook = new Book(title, author, pages, checkbox); 
-    Library.push(newBook);                                                                           
-    let bookPopUp = createBook(newBook);     
-    mainContent.appendChild(bookPopUp);                                                             
-    bookPopUp.style.display = 'block';
-};
-
-
-//function for a popup
 function createPopUp(){
     const popupDiv = document.createElement('dialog');
     popupDiv.classList.add('popupDiv');
@@ -151,13 +164,15 @@ function createPopUp(){
     childDiv.appendChild(submitBtn);
     submitBtn.addEventListener('click', () => {  
         if(formValidation(authorInput.value, titleInput.value, pagesInput.value) === true){
-            createObject(titleInput.value, authorInput.value, pagesInput.value, checkbox.checked);
+            newBook = new Book(titleInput.value, authorInput.value, pagesInput.value, checkbox.checked);
+            console.log(newBook);
+            GUImanager.createObject(newBook); 
             popupDiv.remove();
         };
     });
-
     return popupDiv;
 };
+
 
 function addBtnResponse(){
     let popUp = createPopUp();
@@ -184,10 +199,7 @@ function addBtnResponse(){
 };
 
 addBtn.addEventListener('click', addBtnResponse);
-showAllBtn.addEventListener('click', function(){   //function that displays all array elements
-    Library.forEach((element) => {
-            let bookPopUp = createBook(element);     
-            mainContent.appendChild(bookPopUp);                                                             
-            bookPopUp.style.display = 'block';
-    });
+showAllBtn.addEventListener('click', function(){   
+    //new code
+    GUImanager.displayAll();  
 });
